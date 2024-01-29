@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/mitioshi/wrapdupes/internal"
 	"golang.org/x/tools/go/analysis/singlechecker"
-	"wrapdupes/internal"
 )
 
 func main() {

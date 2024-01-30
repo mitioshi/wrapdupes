@@ -34,6 +34,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	return nil, nil
 }
 
+//nolint:cyclop
 func scanFileNode(node ast.Node, pass *analysis.Pass, messageOccurrences map[messageKey]struct{}) bool {
 	returnNode, ok := node.(*ast.ReturnStmt)
 	// We're only interested in statements like
@@ -50,16 +51,22 @@ func scanFileNode(node ast.Node, pass *analysis.Pass, messageOccurrences map[mes
 		if !ok {
 			continue
 		}
-		pkg := pass.TypesInfo.ObjectOf(sel.Sel).Pkg().Path()
-		if pkg != "fmt" || sel.Sel.String() != "Errorf" {
+		pkg := pass.TypesInfo.ObjectOf(sel.Sel).Pkg()
+		// pkg is nil for method calls on local variables
+		if pkg == nil || pkg.Path() != "fmt" || sel.Sel.String() != "Errorf" {
 			continue
 		}
-		errorMessage := callExpr.Args[0].(*ast.BasicLit).Value
-		key := messageKey{errorMessage: errorMessage, pkg: pkg}
-		if strings.Contains(errorMessage, "%w") {
+		errorMessageLiteral, ok := callExpr.Args[0].(*ast.BasicLit)
+		if !ok { // i.e. fmt.Errorf(functionCall(...))
+			// although this can produce a duplicate wrapper message, it cannot be realistically detected
+			// Thus, let's skip this case
+			continue
+		}
+		key := messageKey{errorMessage: errorMessageLiteral.Value, pkg: pkg.Path()}
+		if strings.Contains(errorMessageLiteral.Value, "%w") {
 			_, exists := messageOccurrences[key]
 			if exists {
-				pass.Reportf(callExpr.Pos(), "duplicate message for a wrapped error: %s", errorMessage)
+				pass.Reportf(callExpr.Pos(), "duplicate message for a wrapped error: %s", errorMessageLiteral.Value)
 			} else {
 				messageOccurrences[key] = struct{}{}
 			}

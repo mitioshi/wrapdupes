@@ -13,6 +13,7 @@ func main() {
 		"package",
 		"Forbid duplicate error messages in fmt.Errorf calls based on the strictness level. Valid values are 'package', 'function'.",
 	)
+
 	flag.Parse()
 
 	config := internal.AnalyzerConfig{Strictness: *strictness}

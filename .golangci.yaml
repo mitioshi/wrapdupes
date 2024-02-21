@@ -1,0 +1,74 @@
+linters-settings:
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  gomnd:
+    checks:
+      - argument
+      - case
+      - condition
+      - return
+  govet:
+    check-shadowing: true
+  lll:
+    line-length: 140
+  misspell:
+    locale: US
+  nestif:
+    min-complexity: 3
+  nolintlint:
+    require-explanation: true
+    require-specific: true
+
+linters:
+  disable-all: true
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - contextcheck
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - gosmopolitan
+    - govet
+    - ineffassign
+    - lll
+    - loggercheck
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+    - wsl
+    - gochecksumtype
+
+run:
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  timeout: 15s
+  tests: false

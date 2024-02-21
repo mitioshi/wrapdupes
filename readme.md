@@ -80,7 +80,7 @@ This linter is advised to be used with golangci-lint
 
 You can also install it manually
 ```bash
-go install github.com/mitioshi/wrapdupes@latest
+go install github.com/mitioshi/wrapdupes/cmd/wrapdupes@latest
 ```
 Then run it by
 ```bash

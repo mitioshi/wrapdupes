@@ -1,11 +1,12 @@
 package internal
 
 import (
-	"golang.org/x/tools/go/analysis/analysistest"
 	"testing"
+
+	"golang.org/x/tools/go/analysis/analysistest"
 )
 
-func TestInspector(t *testing.T) {
+func TestInspector_PackageLevel(t *testing.T) {
 	testdataDir := analysistest.TestData()
 	examples := []struct {
 		pkg string
@@ -13,13 +14,31 @@ func TestInspector(t *testing.T) {
 		{pkg: "simple"},
 		{pkg: "middlewrap"},
 		{pkg: "multifile"},
-		{pkg: "complex"},
+		{pkg: "funclevel"},
 		{pkg: "dynamicerr"},
 	}
-	analyzer := NewWrapDupesAnalyzer()
+	analyzer := NewWrapDupesAnalyzer(AnalyzerConfig{Strictness: "package"})
 	for _, example := range examples {
 		t.Run(example.pkg, func(t *testing.T) {
 			analysistest.Run(t, testdataDir, &analyzer, example.pkg)
+		})
+	}
+}
+
+func TestInspector_FunctionLevel(t *testing.T) {
+	testdataDir := analysistest.TestData()
+	examples := []struct {
+		name string
+		pkgs []string
+	}{
+		{name: "simple", pkgs: []string{"funclevel"}},
+		{name: "two_functions_within_same_package", pkgs: []string{"funclvl_two_funcs"}},
+		{name: "same_function_in_different_packages", pkgs: []string{"funclvl_samefunc_diff_pkgs", "funclvl_samefunc_diff_pkgs/bar"}},
+	}
+	analyzer := NewWrapDupesAnalyzer(AnalyzerConfig{Strictness: "function"})
+	for _, example := range examples {
+		t.Run(example.name, func(t *testing.T) {
+			analysistest.Run(t, testdataDir, &analyzer, example.pkgs...)
 		})
 	}
 }

@@ -1,4 +1,4 @@
-module wrapdupes
+module github.com/mitioshi/wrapdupes
 
 go 1.21
 

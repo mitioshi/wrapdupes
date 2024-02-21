@@ -14,6 +14,7 @@ func TestInspector(t *testing.T) {
 		{pkg: "middlewrap"},
 		{pkg: "multifile"},
 		{pkg: "complex"},
+		{pkg: "dynamicerr"},
 	}
 	analyzer := NewWrapDupesAnalyzer()
 	for _, example := range examples {

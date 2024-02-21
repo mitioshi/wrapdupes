@@ -2,9 +2,11 @@ package main
 
 import (
 	"flag"
+	"log"
+
+	"golang.org/x/tools/go/analysis/singlechecker"
 
 	"github.com/mitioshi/wrapdupes/internal"
-	"golang.org/x/tools/go/analysis/singlechecker"
 )
 
 func main() {
@@ -16,7 +18,18 @@ func main() {
 
 	flag.Parse()
 
-	config := internal.AnalyzerConfig{Strictness: *strictness}
+	var strictnessParsed internal.StrictnessLeveler
+
+	switch *strictness {
+	case "package":
+		strictnessParsed = internal.PackageLevelStrictness{}
+	case "function":
+		strictnessParsed = internal.FunctionLevelStrictness{}
+	default:
+		log.Fatalln("Invalid strictness level. Valid values are 'package', 'function'.")
+	}
+
+	config := internal.AnalyzerConfig{Strictness: strictnessParsed}
 	analyzer := internal.NewWrapDupesAnalyzer(config)
 	singlechecker.Main(&analyzer)
 }

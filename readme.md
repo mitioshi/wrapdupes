@@ -80,12 +80,19 @@ This linter is advised to be used with golangci-lint
 
 You can also install it manually
 ```bash
-go install github.com/mitioshi/wrapdupes
+go install github.com/mitioshi/wrapdupes@latest
 ```
 Then run it by
 ```bash
 wrapdupes ./...
 ```
+## Configuration
+
+`wrapdupes` can be configured to check for duplicate errors either on the package level or a function level
+Running `wrapdupes -strictness package ./...` will check if there are any fmt.Errorf calls with exact messages within a **package**.
+
+Running `wrapdupes -strictness function ./...` will check if there are any fmt.Errorf calls with exact messages within a **single function/method**.
+If there's two methods with the same wrap message inside a package, this will not be considered an error.
 
 ## Examples
 Here's what `wrapdupes` outputs for [Mattermost server](https://github.com/mattermost/mattermost/tree/v9.4.2/server)

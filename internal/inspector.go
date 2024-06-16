@@ -35,18 +35,16 @@ func NewWrapDupesAnalyzer(config AnalyzerConfig) analysis.Analyzer {
 }
 
 func runWithConfig(config AnalyzerConfig) func(pass *analysis.Pass) (interface{}, error) {
-	var messageOccurrences = make(map[messageKey]struct{})
-
 	return func(pass *analysis.Pass) (interface{}, error) {
+		runner := Runner{
+			pass:               pass,
+			messageOccurrences: make(map[messageKey]struct{}),
+			config:             config,
+		}
+
 		for _, file := range pass.Files {
 			// record the parent expression to always know which function we're in
-			var parents []ast.Node
-			runner := Runner{
-				pass:               pass,
-				messageOccurrences: messageOccurrences,
-				config:             config,
-				parents:            parents,
-			}
+			runner.parents = runner.parents[:0]
 
 			ast.Inspect(file, runner.ScanNode)
 		}

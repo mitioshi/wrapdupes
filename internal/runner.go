@@ -2,6 +2,7 @@ package internal
 
 import (
 	"go/ast"
+	"golang.org/x/tools/go/types/typeutil"
 	"strings"
 	"sync"
 
@@ -42,16 +43,13 @@ func (runner *Runner) ScanNode(node ast.Node) bool {
 			continue
 		}
 
-		sel, ok := callExpr.Fun.(*ast.SelectorExpr)
-
-		if !ok {
-			continue
+		fn := typeutil.StaticCallee(runner.pass.TypesInfo, callExpr)
+		if fn == nil {
+			return false
 		}
 
-		pkg := runner.pass.TypesInfo.ObjectOf(sel.Sel).Pkg()
-
 		// pkg is nil for method calls on local variables
-		if pkg == nil || pkg.Path() != "fmt" || sel.Sel.String() != "Errorf" {
+		if fn.Pkg().Path() != "fmt" || fn.Name() != "Errorf" {
 			continue
 		}
 

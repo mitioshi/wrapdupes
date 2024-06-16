@@ -2,6 +2,7 @@ package internal
 
 import (
 	"go/ast"
+	"slices"
 	"strings"
 	"sync"
 
@@ -21,6 +22,13 @@ type Runner struct {
 	config             AnalyzerConfig
 	parents            []ast.Node
 	mx                 sync.Mutex
+}
+
+var shortFormWraps = []string{
+	"%w: %v", // fmt.Errorf("%w: %v", errClosing, s.readErr)
+	"%w: %s", // fmt.Errorf("%w: %s", ErrValidation, err.Error())
+	"%w: %w", // fmt.Errorf("%w: %w", err, errNoLabelName)
+	"%s: %w", // pre1.19 fmt.Errorf("%s: %w", err.Error(), ErrUniqueAErr)
 }
 
 func (runner *Runner) ScanNode(node ast.Node) bool {
@@ -93,7 +101,9 @@ func (runner *Runner) isDuplicatingMessage(errorMessageLiteral *ast.BasicLit) bo
 	runner.mx.Lock()
 	defer runner.mx.Unlock()
 
-	if strings.Contains(errorMessageLiteral.Value, "%w") {
+	// skip messages like "%w: %v", otherwise it'd give false positives for actually different errors
+	if strings.Contains(errorMessageLiteral.Value, "%w") &&
+		!slices.Contains(shortFormWraps, errorMessageLiteral.Value) {
 		_, exists := runner.messageOccurrences[key]
 
 		if exists {

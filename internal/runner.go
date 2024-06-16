@@ -2,11 +2,11 @@ package internal
 
 import (
 	"go/ast"
-	"golang.org/x/tools/go/types/typeutil"
 	"strings"
 	"sync"
 
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/types/typeutil"
 )
 
 type messageKey struct {

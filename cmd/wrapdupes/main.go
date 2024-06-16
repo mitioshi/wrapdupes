@@ -12,7 +12,7 @@ import (
 func main() {
 	strictness := flag.String(
 		"strictness",
-		"package",
+		"function",
 		"Forbid duplicate error messages in fmt.Errorf calls based on the strictness level. Valid values are 'package', 'function'.",
 	)
 

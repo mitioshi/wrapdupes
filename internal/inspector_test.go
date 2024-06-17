@@ -7,6 +7,8 @@ import (
 )
 
 func TestInspector_PackageLevel(t *testing.T) {
+	t.Parallel()
+
 	testdataDir := analysistest.TestData()
 	examples := []struct {
 		pkg string
@@ -20,12 +22,16 @@ func TestInspector_PackageLevel(t *testing.T) {
 	analyzer := NewWrapDupesAnalyzer(AnalyzerConfig{Strictness: PackageLevelStrictness{}})
 	for _, example := range examples {
 		t.Run(example.pkg, func(t *testing.T) {
+			t.Parallel()
+
 			analysistest.Run(t, testdataDir, &analyzer, example.pkg)
 		})
 	}
 }
 
 func TestInspector_FunctionLevel(t *testing.T) {
+	t.Parallel()
+
 	testdataDir := analysistest.TestData()
 	examples := []struct {
 		name string
@@ -34,10 +40,13 @@ func TestInspector_FunctionLevel(t *testing.T) {
 		{name: "simple", pkgs: []string{"funclevel"}},
 		{name: "two_functions_within_same_package", pkgs: []string{"funclvl_two_funcs"}},
 		{name: "same_function_in_different_packages", pkgs: []string{"funclvl_samefunc_diff_pkgs", "funclvl_samefunc_diff_pkgs/bar"}},
+		{name: "shortform", pkgs: []string{"shortform"}},
 	}
 	analyzer := NewWrapDupesAnalyzer(AnalyzerConfig{Strictness: FunctionLevelStrictness{}})
 	for _, example := range examples {
 		t.Run(example.name, func(t *testing.T) {
+			t.Parallel()
+
 			analysistest.Run(t, testdataDir, &analyzer, example.pkgs...)
 		})
 	}

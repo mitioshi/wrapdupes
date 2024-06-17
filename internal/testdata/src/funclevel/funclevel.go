@@ -29,7 +29,6 @@ func getUserByUsername(name string) (User, error) {
 }
 
 func ensureBot(bot Bot) error {
-	// Check for an existing bot user with that username. If one exists, then use that.
 	if user, err := getUserByUsername("matz"); err == nil {
 		if user.IsBot() {
 			if err := setPluginKey(user.ID); err != nil {

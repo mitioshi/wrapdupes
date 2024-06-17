@@ -25,10 +25,10 @@ type Runner struct {
 }
 
 var shortFormWraps = []string{
-	"%w: %v", // fmt.Errorf("%w: %v", errClosing, s.readErr)
-	"%w: %s", // fmt.Errorf("%w: %s", ErrValidation, err.Error())
-	"%w: %w", // fmt.Errorf("%w: %w", err, errNoLabelName)
-	"%s: %w", // pre1.19 fmt.Errorf("%s: %w", err.Error(), ErrUniqueAErr)
+	"\"%w: %v\"", // fmt.Errorf("%w: %v", errClosing, s.readErr)
+	"\"%w: %s\"", // fmt.Errorf("%w: %s", ErrValidation, err.Error())
+	"\"%w: %w\"", // fmt.Errorf("%w: %w", err, errNoLabelName)
+	"\"%s: %w\"", // pre1.19 fmt.Errorf("%s: %w", err.Error(), ErrUniqueAErr)
 }
 
 func (runner *Runner) ScanNode(node ast.Node) bool {
@@ -56,7 +56,6 @@ func (runner *Runner) ScanNode(node ast.Node) bool {
 			return false
 		}
 
-		// pkg is nil for method calls on local variables
 		if fn.Pkg().Path() != "fmt" || fn.Name() != "Errorf" {
 			continue
 		}
